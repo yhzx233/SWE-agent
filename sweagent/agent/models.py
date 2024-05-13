@@ -209,6 +209,16 @@ class OpenAIModel(BaseModel):
             "cost_per_input_token": 1e-05,
             "cost_per_output_token": 3e-05,
         },
+        "deepseek-chat": {
+            "max_context": 32_768,
+            "cost_per_input_token": 1e-06,
+            "cost_per_output_token": 2e-06,
+        },
+        "deepseek-coder": {
+            "max_context": 16_385,
+            "cost_per_input_token": 1e-06,
+            "cost_per_output_token": 2e-06,
+        }
     }
 
     SHORTCUTS = {
@@ -842,7 +852,7 @@ def get_model(args: ModelArguments, commands: Optional[list[Command]] = None):
         return HumanThoughtModel(args, commands)
     if args.model_name == "replay":
         return ReplayModel(args, commands)
-    elif args.model_name.startswith("gpt") or args.model_name.startswith("ft:gpt") or args.model_name.startswith("azure:gpt"):
+    elif args.model_name.startswith("gpt") or args.model_name.startswith("ft:gpt") or args.model_name.startswith("azure:gpt") or args.model_name.startswith("deepseek"):
         return OpenAIModel(args, commands)
     elif args.model_name.startswith("claude"):
         return AnthropicModel(args, commands)
