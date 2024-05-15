@@ -35,11 +35,14 @@ RUN bash getconda.sh ${TARGETARCH} \
     && rm -f miniconda.sh
 RUN conda --version \
     && conda init bash \
-    && conda config --append channels conda-forge
+    && conda config --append channels conda-forge \
+    && conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/ \
+    && conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
 
 # Install python packages
 COPY docker/requirements.txt /root/requirements.txt
-RUN pip install -r /root/requirements.txt
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple \
+    && pip install -r /root/requirements.txt
 
 WORKDIR /
 
