@@ -1,19 +1,67 @@
 # @yaml
-# signature: |-
-#   edit <start_line>:<end_line>
-#   <replacement_text>
-#   end_of_edit
-# docstring: replaces lines <start_line> through <end_line> (inclusive) with the given text in the open file. The replacement text is terminated by a line with only end_of_edit on it. All of the <replacement text> will be entered, so make sure your indentation is formatted properly. Python files will be checked for syntax errors after the edit. If the system detects a syntax error, the edit will not be executed. Simply try to edit the file again, but make sure to read the error message and modify the edit command you issue accordingly. Issuing the same command a second time will just lead to the same error message again.
-# end_name: end_of_edit
+# signature: choose_lines <start_line>:<end_line>
+# docstring: choose lines <start_line> through <end_line> (inclusive) to edit.
 # arguments:
 #   start_line:
 #     type: integer
-#     description: the line number to start the edit at
+#     description: the line number to start the selection at
 #     required: true
 #   end_line:
 #     type: integer
-#     description: the line number to end the edit at (inclusive)
+#     description: the line number to end the selection at (inclusive)
 #     required: true
+choose_lines() {
+    if [ -z "$CURRENT_FILE" ]; then
+        echo 'No file open. Use the `open` command first.'
+        return
+    fi
+
+    local start_line="$(echo $1: | cut -d: -f1)"
+    local end_line="$(echo $1: | cut -d: -f2)"
+
+    if [ -z "$start_line" ] || [ -z "$end_line" ]; then
+        echo "Usage: choose_lines <start_line>:<end_line>"
+        return
+    fi
+
+    local re='^[0-9]+$'
+    if ! [[ $start_line =~ $re ]]; then
+        echo "Usage: choose_lines <start_line>:<end_line>"
+        echo "Error: start_line must be a number"
+        return
+    fi
+    if ! [[ $end_line =~ $re ]]; then
+        echo "Usage: choose_lines <start_line>:<end_line>"
+        echo "Error: end_line must be a number"
+        return
+    fi
+
+    # Bash array starts at 0, so let's adjust
+    start_line=$((start_line - 1))
+    end_line=$((end_line))
+
+    # Read the file line by line into an array
+    mapfile -t lines < "$CURRENT_FILE"
+
+    # Output the selected lines
+    echo "\`\`\`"
+    for ((i=start_line; i<end_line; i++)); do
+        echo "${lines[i]}"
+    done
+    echo "\`\`\`"
+
+    export SELECTED_START_LINE=$start_line
+    export SELECTED_END_LINE=$end_line
+}
+
+# @yaml
+# signature: |-
+#   edit
+#   <replacement_text>
+#   end_of_edit
+# docstring: replaces the lines previously chosen with the `choose_lines` command with the given text. The replacement text is terminated by a line with only end_of_edit on it. All of the <replacement_text> will be entered, so make sure your indentation is formatted properly. Python files will be checked for syntax errors after the edit. If the system detects a syntax error, the edit will not be executed. Simply try to edit the file again, but make sure to read the error message and modify the edit command you issue accordingly. Issuing the same command a second time will just lead to the same error message again.
+# end_name: end_of_edit
+# arguments:
 #   replacement_text:
 #     type: string
 #     description: the text to replace the current selection with
@@ -25,30 +73,14 @@ edit() {
         return
     fi
 
-    local start_line="$(echo $1: | cut -d: -f1)"
-    local end_line="$(echo $1: | cut -d: -f2)"
-
-    if [ -z "$start_line" ] || [ -z "$end_line" ]
+    if [ -z "$SELECTED_START_LINE" ] || [ -z "$SELECTED_END_LINE" ]
     then
-        echo "Usage: edit <start_line>:<end_line>"
+        echo 'No lines selected. Use the `select` command first.'
         return
     fi
 
-    local re='^[0-9]+$'
-    if ! [[ $start_line =~ $re ]]; then
-        echo "Usage: edit <start_line>:<end_line>"
-        echo "Error: start_line must be a number"
-        return
-    fi
-    if ! [[ $end_line =~ $re ]]; then
-        echo "Usage: edit <start_line>:<end_line>"
-        echo "Error: end_line must be a number"
-        return
-    fi
-
-    # Bash array starts at 0, so let's adjust
-    local start_line=$((start_line - 1))
-    local end_line=$((end_line))
+    local start_line=$SELECTED_START_LINE
+    local end_line=$SELECTED_END_LINE
 
     local line_count=0
     local replacement=()
@@ -121,7 +153,7 @@ edit() {
         export WINDOW=$original_window
 
         echo "Your changes have NOT been applied. Please fix your edit command and try again."
-        echo "You either need to 1) Specify the correct start/end line arguments or 2) Correct your edit code."
+        echo "You either need to 1) Select the correct start/end line arguments or 2) Correct your edit code or 3) Open the correct file, maybe you need \`open <path> [<line_number>] to open the right file\`."
         echo "DO NOT re-run the same failed edit command. Running it again will lead to the same error."
     fi
 
