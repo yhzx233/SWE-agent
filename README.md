@@ -8,7 +8,7 @@
 <p align="center">
   <a href="https://swe-agent.com"><strong>Website & Demo</strong></a>&nbsp; | &nbsp;
   <a href="https://discord.gg/AVEFbBn2rH"><strong>Discord</strong></a>&nbsp; | &nbsp;
-  <a href="https://swe-agent.com/paper.pdf"><strong>Preprint</strong></a>&nbsp; 
+  <a href="https://swe-agent.com/paper.pdf"><strong>Preprint</strong></a>
 </p>
 
 
@@ -17,31 +17,16 @@ SWE-agent turns LMs (e.g. GPT-4) into software engineering agents that can fix b
 
 On [SWE-bench](https://github.com/princeton-nlp/SWE-bench), SWE-agent resolves **12.29%** of issues, achieving the state-of-the-art performance on the full test set.
 
+We accomplish our results by designing simple LM-centric commands and feedback formats to make it easier for the LM to browse the repository, view, edit and execute code files. We call this an 🤖 **Agent-Computer Interface (ACI)**.
+Read more about it in our [paper](https://swe-agent.com/paper.pdf)!
+
 SWE-agent is built and maintained by researchers from Princeton University. 
 
 <p align="center">
   <img src="assets/results+preview.png" style="width: 80%; height: auto;">
 </p>
 
-### ✨ Use SWE-agent as a dev tool
-
-We provide a command line tool and a graphical web interface:
-
-![My Movie 3](https://github.com/princeton-nlp/SWE-agent/assets/13602468/fa201621-ec31-4644-b658-c1d0feb92253)
-
-### 🤖 Agent-Computer Interface (ACI) <a name="aci"></a>
-We accomplish our results by designing simple LM-centric commands and feedback formats to make it easier for the LM to browse the repository, view, edit and execute code files. We call this an **Agent-Computer Interface** (ACI) and build the SWE-agent repository to make it easy to iterate on ACI design for repository-level coding agents.
-
-Just like how typical language models requires good prompt engineering, good ACI design leads to much better results when using agents. As we show in our [paper](https://swe-agent.com/paper.pdf), a baseline agent without a well-tuned ACI does much worse than SWE-agent.
-
-SWE-agent contains features that we discovered to be immensely helpful during the agent-computer interface design process:
-1. We add a linter that runs when an edit command is issued, and do not let the edit command go through if the code isn't syntactically correct.
-2. We supply the agent with a special-built file viewer, instead of having it just ```cat``` files. We found that this file viewer works best when displaying just 100 lines in each turn. The file editor that we built has commands for scrolling up and down and for performing a search within the file.
-3. We supply the agent with a special-built full-directory string searching command. We found that it was important for this tool to succinctly list the matches- we simply list each file that had at least one match. Showing the model more context about each match proved to be too confusing for the model. 
-4. When commands have an empty output we return a message saying "Your command ran successfully and did not produce any output."
-
-Read our paper for more details [here](https://swe-agent.com/paper.pdf).
-
+If you found this work helpful, please consider using the following citation:
 ```
 @misc{yang2024sweagent,
       title={SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering}, 
@@ -49,6 +34,12 @@ Read our paper for more details [here](https://swe-agent.com/paper.pdf).
       year={2024},
 }
 ```
+
+### ✨ Use SWE-agent as a dev tool
+
+We provide a command line tool and a graphical web interface:
+
+![My Movie 3](https://github.com/princeton-nlp/SWE-agent/assets/13602468/fa201621-ec31-4644-b658-c1d0feb92253)
 
 ## 🚀 Installation <a name="setup"></a>
 
@@ -63,7 +54,7 @@ https://github.com/princeton-nlp/SWE-agent/assets/13602468/44d60674-59ca-4986-9b
 1. Click [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/princeton-nlp/SWE-agent)
 2. Add your API keys to `keys.cfg` (find the file in the left sidebar and fill out the template)
 3. Make sure to wait until the `postCreateCommand` in the terminal window at the bottom is finished
-4. Enter your SWE-agent command ([see below](#-solve-real-life-github-issues-))
+4. Enter your SWE-agent command ([see below](#real-life))
 
 ### Install from source
 
@@ -76,7 +67,7 @@ https://github.com/princeton-nlp/SWE-agent/assets/13602468/44d60674-59ca-4986-9b
 3. Clone this repository.
 4. Run `pip install --editable .` at the repository root (as with any python setup, it's recommended to use [conda][] or [virtual environments][] to manage dependencies).
 5. Run `./setup.sh` to create the `swe-agent` docker image.
-6. Create a `keys.cfg` file at the root of this repository ([see below](#-add-your-api-keystokens)).
+6. Create a `keys.cfg` file at the root of this repository ([see below](#tokens)).
 
 [nodejs-install]: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
 
@@ -95,7 +86,7 @@ Instead of installing SWE-agent from source, you can also run the software direc
 
 1. [Install Docker](https://docs.docker.com/engine/install/), then start Docker locally.
 2. Run `docker pull sweagent/swe-agent:latest`
-3. Add your API tokens to a file `keys.cfg` as explained [below](#-add-your-api-keystokens)
+3. Add your API tokens to a file `keys.cfg` as explained [below](#tokens)
 
 Then run
 
@@ -113,14 +104,14 @@ docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock \
 ```
 
 > [!TIP]
-> * For more information on the different API keys/tokens, see [below](#-add-your-api-keystokens).
+> * For more information on the different API keys/tokens, see [below](#tokens).
 > * If you're using docker on Windows, use `-v //var/run/docker.sock:/var/run/docker.sock`
 >   (double slash) to escape it ([more information](https://stackoverflow.com/a/47229180/)).
 > * See the [installation issues section](#more-installation-tips) for more help if you run into
 >   trouble.
 
 
-### 🔑 Add your API keys/tokens
+### 🔑 Add your API keys/tokens <a name="tokens"></a>
 
 Create a `keys.cfg` file at the root of this repository and populate it with your API keys.
 
@@ -149,7 +140,7 @@ OPENAI_API_BASE_URL: 'LM base URL here if using Local or alternative api Endpoin
 
 See the following links for tutorials on obtaining [Anthropic](https://docs.anthropic.com/claude/reference/getting-started-with-the-api), [OpenAI](https://platform.openai.com/docs/quickstart/step-2-set-up-your-api-key), and [Github](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) tokens.
 
-### More installation tips
+### More installation tips <a name="more-installation-tips"></a>
 
 If you seem to be having issues with running docker
 
@@ -158,7 +149,7 @@ If you seem to be having issues with running docker
 
 Any remaining issues? Please [open a GitHub issue](https://github.com/princeton-nlp/SWE-agent/issues/new/choose)!
 
-## 🔥 Solve real Git issues! <a name="real-life"></a>
+## 🔥 Solve real GitHub issues! <a name="real-life"></a>
 
 To start our web UI, simply run
 
@@ -221,7 +212,7 @@ There are two steps to the SWE-agent pipeline. First SWE-agent takes an input Gi
 > At this moment, there are known issues with a small number of repositories that don't install properly for `arm64` / `aarch64` architecture computers. We're working on a fix, but if you'd like to run and evaluate on the entirety of SWE-bench, the easiest way is by using an `x86` machine.
 
 ### 👩‍💻 Inference <a name="inference"></a>
-**Inference on *any* GitHub Issue**: See [above](#-quickstart-solve-real-life-github-issues-).
+**Inference on *any* GitHub Issue**: See [above](#real-life).
 
 **Inference on SWE-bench**: Run SWE-agent on [SWE-bench Lite](https://www.swebench.com/lite.html) and generate patches.
 ```bash

@@ -2,6 +2,7 @@ import http.server
 import json
 import os
 import socketserver
+from typing import List
 import yaml
 
 from pathlib import Path
@@ -47,8 +48,8 @@ def append_patch(instance_id, content, patches, patch_type):
     return content
 
 
-def append_results(traj_path, instance_id, content, results, results_file, scorecards, scorecards_file):
-    stats = []
+def append_results(traj_path: Path, instance_id: str, content, results, results_file, scorecards, scorecards_file):
+    stats: List[str] = []
     model_stats = {}
     if traj_path.exists():
         data = json.loads(traj_path.read_text())
@@ -109,8 +110,7 @@ def append_results(traj_path, instance_id, content, results, results_file, score
     else:
         status.append("---------------------------")
         status.append("Note that the evaluation results here may not be accurate or up to date, since they are computed separately from the agent run itself.")
-        results_relative = results_file.resolve().relative_to(Path(__file__).resolve().parent.parent)
-        status.append(f"Check {results_relative} for the most accurate evaluation results.")
+        status.append(f"Check {results_file} for the most accurate evaluation results.")
         status.append("")
         status.append(f"Instance ID: {instance_id}")
         status.append("Based on results:")
