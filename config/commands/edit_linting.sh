@@ -75,7 +75,7 @@ edit() {
 
     if [ -z "$SELECTED_START_LINE" ] || [ -z "$SELECTED_END_LINE" ]
     then
-        echo 'No lines selected. Use the `select` command first.'
+        echo 'No lines selected. Use the `choose_lines <start_line>:<end_line>` command first.'
         return
     fi
 
