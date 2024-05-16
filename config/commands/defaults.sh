@@ -70,8 +70,12 @@ open() {
     if [ -f "$1" ]; then
         export CURRENT_FILE=$(realpath $1)
         export CURRENT_LINE=$line_number
+        unset SELECTED_START_LINE
+        unset SELECTED_END_LINE
         _constrain_line
         _print
+        echo ""
+        echo "TIPS: If you don't see what you're looking for at the beginning, you may need to use \`search_term_in_file\` to find the specific line number."
     elif [ -d "$1" ]; then
         echo "Error: $1 is a directory. You can only open files. Use cd or ls to navigate directories."
     else

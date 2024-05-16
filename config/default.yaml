@@ -94,7 +94,7 @@ state_command:
     };
 parse_function: ThoughtActionParser
 env_variables:
-  WINDOW: 100
+  WINDOW: 50
   OVERLAP: 2
   CURRENT_LINE: 0
   CURRENT_FILE: ''

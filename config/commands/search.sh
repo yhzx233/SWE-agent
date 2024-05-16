@@ -1,5 +1,5 @@
 # @yaml
-# signature: search_dir <search_term> [<dir>]
+# signature: search_term_in_dir <search_term> [<dir>]
 # docstring: searches for search_term in all files in dir. If dir is not provided, searches in the current directory
 # arguments:
 #   search_term:
@@ -10,7 +10,7 @@
 #     type: string
 #     description: the directory to search in (if not provided, searches in the current directory)
 #     required: false
-search_dir() {
+search_term_in_dir() {
     if [ $# -eq 1 ]; then
         local search_term="$1"
         local dir="./"
@@ -23,7 +23,7 @@ search_dir() {
             return
         fi
     else
-        echo "Usage: search_dir <search_term> [<dir>]"
+        echo "Usage: search_term_in_dir <search_term> [<dir>]"
         return
     fi
     dir=$(realpath "$dir")
@@ -49,7 +49,7 @@ search_dir() {
 }
 
 # @yaml
-# signature: search_file <search_term> [<file>]
+# signature: search_term_in_file <search_term> [<file>]
 # docstring: searches for search_term in file. If file is not provided, searches in the current open file
 # arguments:
 #   search_term:
@@ -60,10 +60,10 @@ search_dir() {
 #     type: string
 #     description: the file to search in (if not provided, searches in the current open file)
 #     required: false
-search_file() {
+search_term_in_file() {
     # Check if the first argument is provided
     if [ -z "$1" ]; then
-        echo "Usage: search_file <search_term> [<file>]"
+        echo "Usage: search_term_in_file <search_term> [<file>]"
         return
     fi
     # Check if the second argument is provided
@@ -72,7 +72,7 @@ search_file() {
         if [ -f "$2" ]; then
             local file="$2"  # Set file if valid
         else
-            echo "Usage: search_file <search_term> [<file>]"
+            echo "Usage: search_term_in_file <search_term> [<file>]"
             echo "Error: File name $2 not found. Please provide a valid file name."
             return  # Exit if the file is not valid
         fi
@@ -113,7 +113,7 @@ search_file() {
 }
 
 # @yaml
-# signature: find_file <file_name> [<dir>]
+# signature: search_filename <file_name> [<dir>]
 # docstring: finds all files with the given name in dir. If dir is not provided, searches in the current directory
 # arguments:
 #   file_name:
@@ -124,7 +124,7 @@ search_file() {
 #     type: string
 #     description: the directory to search in (if not provided, searches in the current directory)
 #     required: false
-find_file() {
+search_filename() {
     if [ $# -eq 1 ]; then
         local file_name="$1"
         local dir="./"
@@ -137,7 +137,7 @@ find_file() {
             return
         fi
     else
-        echo "Usage: find_file <file_name> [<dir>]"
+        echo "Usage: search_filename <file_name> [<dir>]"
         return
     fi
 

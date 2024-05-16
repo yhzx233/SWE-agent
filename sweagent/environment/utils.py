@@ -295,6 +295,7 @@ def _get_persistent_container(ctr_name: str, image_name: str, persistent: bool =
             tty=True,
             detach=True,
             auto_remove=not persistent,
+            # dns=["8.8.8.8", "8.8.4.4"],
         )
         container_obj.start()
     startup_cmd =  [

@@ -44,6 +44,7 @@ choose_lines() {
     mapfile -t lines < "$CURRENT_FILE"
 
     # Output the selected lines
+    echo "Lines selected:"
     echo "\`\`\`"
     for ((i=start_line; i<end_line; i++)); do
         echo "${lines[i]}"
@@ -114,6 +115,8 @@ edit() {
         _print
 
         echo "File updated. Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary."
+        echo ""
+        echo "TIPS: If you believe you have fixed the bug and verifying the fix requires a complex environment, you may just \`submit\`."
     else
         echo "Your proposed edit has introduced new syntax error(s). Please read this error message carefully and then retry editing the file."
         echo ""
@@ -148,12 +151,20 @@ edit() {
         _print
         echo "-------------------------------------------------"
 
+        # Output the selected lines
+        echo "This is the lines you selected to edit:"
+        echo "\`\`\`"
+        for ((i=start_line; i<end_line; i++)); do
+            echo "${lines[i]}"
+        done
+        echo "\`\`\`"
+
         # Restore original values
         export CURRENT_LINE=$original_current_line
         export WINDOW=$original_window
 
         echo "Your changes have NOT been applied. Please fix your edit command and try again."
-        echo "You either need to 1) Select the correct start/end line arguments or 2) Correct your edit code or 3) Open the correct file, maybe you need \`open <path> [<line_number>] to open the right file\`."
+        echo "You either need to 1) Select the correct start/end line arguments using \`choose_lines\` or 2) Correct your edit code or 3) Open the correct file, maybe you need \`open <path> [<line_number>] to open the right file\`."
         echo "DO NOT re-run the same failed edit command. Running it again will lead to the same error."
     fi
 
