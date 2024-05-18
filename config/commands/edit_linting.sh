@@ -36,6 +36,8 @@ choose_lines() {
         return
     fi
 
+    echo "Selected lines ${start_line}:${end_line}"
+
     # Bash array starts at 0, so let's adjust
     start_line=$((start_line - 1))
     end_line=$((end_line))
@@ -44,12 +46,13 @@ choose_lines() {
     mapfile -t lines < "$CURRENT_FILE"
 
     # Output the selected lines
-    echo "Lines selected:"
-    echo "\`\`\`"
+    echo "edit"
     for ((i=start_line; i<end_line; i++)); do
         echo "${lines[i]}"
     done
-    echo "\`\`\`"
+    echo "end_of_edit"
+    echo ""
+    echo "TIPS: 1) If you selected the wrong lines, use \`choose_lines\` again to adjust."
 
     export SELECTED_START_LINE=$start_line
     export SELECTED_END_LINE=$end_line
@@ -117,6 +120,9 @@ edit() {
         echo "File updated. Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary."
         echo ""
         echo "TIPS: If you believe you have fixed the bug and verifying the fix requires a complex environment, you may just \`submit\`."
+        echo ""
+
+        choose_lines $((start_line+1)):$((start_line+line_count))
     else
         echo "Your proposed edit has introduced new syntax error(s). Please read this error message carefully and then retry editing the file."
         echo ""

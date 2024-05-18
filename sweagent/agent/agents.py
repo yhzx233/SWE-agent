@@ -514,8 +514,8 @@ class Agent:
         self._append_history(
             {
                 "role": "assistant",
-                "content": output,
-                "thought": thought,
+                "content": output.lstrip(), # deepseek-chat tends to generate extra space...
+                "thought": thought.lstrip(),
                 "action": action,
                 "agent": self.name,
             }

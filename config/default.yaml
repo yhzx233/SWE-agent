@@ -59,6 +59,8 @@ instance_template: |-
   6. When editing files, it is easy to accidentally specify a wrong line number or to write code with incorrect indentation. Always check the code after you issue an edit to make sure that it reflects what you wanted to accomplish. If it didn't, issue another command to fix it.
 
   7. You are fixing bugs in the repository, do not avoid errors by modifying the files that reproduce the bugs.
+
+  8. Some classes have very long docstring comments, and modifying these comments is pointless. Try searching for 'def __init__' to locate the definition lines.
      
 
   (Open file: {open_file})
@@ -106,6 +108,7 @@ command_files:
 - config/commands/search.sh
 - config/commands/edit_linting.sh
 - config/commands/_split_string.py
+- config/commands/add_function_to_class.py
 parse_command: ParseCommandDetailed
 history_processor: Last5Observations
 # demonstrations:
