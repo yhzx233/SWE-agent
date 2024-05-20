@@ -36,7 +36,7 @@ choose_lines() {
         return
     fi
 
-    echo "Selected lines ${start_line}:${end_line}"
+    echo "Selected lines ${start_line}:${end_line}, lines you selected are follow:"
 
     # Bash array starts at 0, so let's adjust
     start_line=$((start_line - 1))
@@ -52,7 +52,7 @@ choose_lines() {
     done
     echo "end_of_edit"
     echo ""
-    echo "TIPS: 1) If you selected the wrong lines, use \`choose_lines\` again to adjust."
+    echo "TIPS: 1) If you selected the wrong lines, use \`choose_lines\` again to adjust. 2) \`edit\` to replace the lines above."
 
     export SELECTED_START_LINE=$start_line
     export SELECTED_END_LINE=$end_line
