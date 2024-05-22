@@ -224,6 +224,11 @@ class OpenAIModel(BaseModel):
             "cost_per_input_token": 5e-06,
             "cost_per_output_token": 15e-06,
         },
+        "gpt-llama3-lora": {
+            "max_context": 8_192,
+            "cost_per_input_token": 5e-07,
+            "cost_per_output_token": 1.5e-06,
+        }
     }
 
     SHORTCUTS = {
@@ -283,7 +288,7 @@ class OpenAIModel(BaseModel):
                 temperature=self.args.temperature,
                 top_p=self.args.top_p,
             )
-        except BadRequestError:
+        except:
             raise CostLimitExceededError(f"Context window ({self.model_metadata['max_context']} tokens) exceeded")
         # Calculate + update costs, return response
         input_tokens = response.usage.prompt_tokens
