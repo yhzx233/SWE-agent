@@ -161,6 +161,12 @@ class BaseModel:
                 f"Cost {self.stats.instance_cost:.2f} exceeds limit {self.args.per_instance_cost_limit:.2f}"
             )
             raise CostLimitExceededError("Instance cost limit exceeded")
+        
+        if input_tokens + output_tokens >= self.model_metadata["max_context"]:
+            logger.warning(
+                f"Max context {self.model_metadata["max_context"]} exceeded"
+            )
+            raise CostLimitExceededError("Context limit exceeded")
         return cost
 
     def query(self, history: list[dict[str, str]]) -> str:
