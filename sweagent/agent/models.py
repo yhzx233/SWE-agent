@@ -164,7 +164,7 @@ class BaseModel:
         
         if input_tokens + output_tokens >= self.model_metadata["max_context"]:
             logger.warning(
-                f"Max context {self.model_metadata["max_context"]} exceeded"
+                f"Max context exceeded"
             )
             raise CostLimitExceededError("Context limit exceeded")
         return cost
